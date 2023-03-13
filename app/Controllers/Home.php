@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 use App\Models\IndicadoresModel;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\Pager\Pager;
+use CodeIgniter\Pager\SimplePager;
 
 class Home extends BaseController
 {
@@ -9,12 +12,15 @@ class Home extends BaseController
     {
         $db = \Config\Database::connect();
 
-        // Retrieve data from the database
         $model = new IndicadoresModel();
-        $data['indicators'] = $model->findAll();
+        $data['indicators'] = $model->paginate(10); // display 10 records per page
 
+        // Get the pager object
+        $pager = $model->pager;
 
-        // Load the view
+        // Pass the pager object to the view
+        $data['pager'] = $pager;
+
         return view('indicadores', $data);
     }
 
