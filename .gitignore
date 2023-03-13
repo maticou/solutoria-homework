@@ -48,6 +48,8 @@ Vagrantfile
 #-------------------------
 # Temporary Files
 #-------------------------
+writable/
+
 writable/cache/*
 !writable/cache/index.html
 
@@ -85,7 +87,7 @@ phpunit
 # Composer
 #-------------------------
 vendor/
-assets/
+public/bootstrap/
 composer.lock
 
 #-------------------------
