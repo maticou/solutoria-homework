@@ -13,7 +13,7 @@ class Home extends BaseController
         $db = \Config\Database::connect();
 
         $model = new IndicadoresModel();
-        $data['indicators'] = $model->paginate(50); // display 10 records per page
+        $data['indicators'] = $model->paginate(10); // display 10 records per page
 
         // Get the pager object
         $pager = $model->pager;
