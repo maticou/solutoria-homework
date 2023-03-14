@@ -25,11 +25,39 @@
                 <div class="col-md-12">
                     <button class="btn btn-primary mb-3"  id="show-form-btn">Agregar UF</button>
                 </div>
-
                 <div class="col-md-12 mt-3" id="add-form-section" style="display:none;">
+                    <h1>Create Indicador</h1>
                     <form id="add-form">
-                        <!-- add form inputs here -->
-                        <button type="submit" class="btn btn-success">Agregar</button>
+                        <div class="form-group">
+                            <label for="nombreIndicador">Nombre Indicador</label>
+                            <input type="text" class="form-control" id="nombreIndicador" name="nombreIndicador" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="codigoIndicador">Código Indicador</label>
+                            <input type="text" class="form-control" id="codigoIndicador" name="codigoIndicador" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="unidadMedidaIndicador">Unidad de Medida</label>
+                            <input type="text" class="form-control" id="unidadMedidaIndicador" name="unidadMedidaIndicador" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valorIndicador">Valor Indicador</label>
+                            <input type="number" class="form-control" id="valorIndicador" name="valorIndicador" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaIndicador">Fecha Indicador</label>
+                            <input type="date" class="form-control" id="fechaIndicador" name="fechaIndicador" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tiempoIndicador">Tiempo Indicador</label>
+                            <input type="text" class="form-control" id="tiempoIndicador" name="tiempoIndicador" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="origenIndicador">Origen Indicador</label>
+                            <input type="text" class="form-control" id="origenIndicador" name="origenIndicador" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Crear Indicador</button>
                     </form>
                 </div>
                 
@@ -99,6 +127,92 @@
             });            
         });
 
+
+        $(document).ready(function() {
+            // Add client-side validation to the form
+            $('#add-form').validate({
+                rules: {
+                    nombreIndicador: {
+                        required: true,
+                        maxlength: 37
+                    },
+                    codigoIndicador: {
+                        required: true,
+                        maxlength: 14
+                    },
+                    unidadMedidaIndicador: {
+                        required: true,
+                        maxlength: 10
+                    },
+                    valorIndicador: {
+                        required: true,
+                        number: true
+                    },
+                    fechaIndicador: {
+                        required: true,
+                        date: true
+                    },
+                    tiempoIndicador: {
+                        maxlength: 30
+                    },
+                    origenIndicador: {
+                        required: true,
+                        maxlength: 13
+                    }
+                },
+                messages: {
+                    nombreIndicador: {
+                        required: "Por favor ingrese el nombre del indicador",
+                        maxlength: "El nombre del indicador debe tener menos de 37 caracteres"
+                    },
+                    codigoIndicador: {
+                        required: "Por favor ingrese el código del indicador",
+                        maxlength: "El código del indicador debe tener menos de 14 caracteres"
+                    },
+                    unidadMedidaIndicador: {
+                        required: "Por favor ingrese la unidad de medida",
+                        maxlength: "La unidad de medida debe tener menos de 10 caracteres"
+                    },
+                    valorIndicador: {
+                        required: "Por favor ingrese el valor del indicador",
+                        number: "El valor del indicador debe ser un número"
+                    },
+                    fechaIndicador: {
+                        required: "Por favor ingrese la fecha del indicador",
+                        date: "La fecha del indicador debe tener el formato yyyy-mm-dd"
+                    },
+                    tiempoIndicador: {
+                        maxlength: "El tiempo del indicador debe tener menos de 30 caracteres"
+                    },
+                    origenIndicador: {
+                        required: "Por favor ingrese el origen del indicador",
+                        maxlength: "El origen del indicador debe tener menos de 13 caracteres"
+                    }
+                },
+                // Submit the form using Ajax if client-side validation passes
+                submitHandler: function(form) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Home/create/',
+                        dataType: "json",
+                        data: $('#add-form').serialize(),
+                        success: function(response) {
+                            if (response.success) {
+                                alert("Indicador creado exitosamente.");
+                                location.reload();
+                            } else {
+                                alert("Error al crear el indicador.");
+                            }
+                        },
+                        error: function() {
+                            alert("Error al crear el indicador.");
+                        }
+                    });
+                }
+            });
+        });
+
+
         $(document).ready(function() {
             var form;
 
@@ -138,7 +252,7 @@
                 let id = button.getAttribute("data-id");
                 $.ajax({
                 type: "POST",
-                url: "<?php echo base_url('eliminar-ajax/'); ?>" + id,
+                url: '/Home/delete/' + id,
                 success: function() {
                     window.location.reload();
                 },

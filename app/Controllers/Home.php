@@ -25,15 +25,37 @@ class Home extends BaseController
 
     public function create()
     {
-        //
+        if ($this->request->isAJAX()) {
+            // Get the POST data
+            $data = $this->request->getPost();
+
+            // Convert text fields to uppercase
+            $data['nombreIndicador'] = strtoupper($data['nombreIndicador']);
+            $data['codigoIndicador'] = strtoupper($data['codigoIndicador']);
+
+            // Validate the data
+            $model = new IndicadoresModel();
+            // validate the data
+            if (!$model->validate($data)) {
+                return $this->response->setJSON(['success' => false, 'message' => $model->errors()]);
+            }
+            // save data to database
+            $model->save($data);
+            return $this->response->setJSON(['success' => true, 'message' => 'Data saved successfully.']);
+        } else {
+            // Return the view for creating data
+            return view('create');
+        }
     }
+
+
 
     public function update($id)
     {
         $model = new IndicadoresModel();
         $data = [
-            'nombreIndicador' => $this->request->getPost('nombreIndicador'),
-            'codigoIndicador' => $this->request->getPost('codigoIndicador'),
+            'nombreIndicador' => strtoupper($this->request->getPost('nombreIndicador')),
+            'codigoIndicador' => strtoupper($this->request->getPost('codigoIndicador')),
             'unidadMedidaIndicador' => $this->request->getPost('unidadMedidaIndicador'),
             'valorIndicador' => $this->request->getPost('valorIndicador'),
             'fechaIndicador' => $this->request->getPost('fechaIndicador'),
@@ -45,7 +67,7 @@ class Home extends BaseController
     
 
 
-    public function eliminarAjax($id)
+    public function delete($id)
     {
         $model = new IndicadoresModel();
         $model->delete($id);
