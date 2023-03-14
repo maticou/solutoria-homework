@@ -30,6 +30,10 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
+$routes->post('eliminar-ajax/(:num)', 'Home::eliminarAjax/$1');
+$routes->post('Home/update/(:num)', 'Home::update/$1');
+
+
 
 /*
  * --------------------------------------------------------------------

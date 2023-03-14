@@ -7,41 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="image/png" href="/favicon.ico">
     <link rel="stylesheet" href="<?php echo base_url('bootstrap/css/bootstrap.min.css'); ?>">
-    <style>
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 1rem;
-            border-radius: 20px;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        }
+    <link rel="stylesheet" href="<?php echo base_url('bootstrap/css/styles.css'); ?>">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        .pagination li {
-            list-style-type: none;
-            margin-right: 0.5rem;
-            border-radius: 20px;
-        }
-
-        .pagination li.active a {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: #fff;
-            border-radius: 20px;
-        }
-
-        .pagination li a {
-            color: #007bff;
-            border: 1px solid #007bff;
-            padding: 0.3rem 0.5rem;
-            border-radius: 20px;
-        }
-
-        .pagination li.disabled a {
-            color: #ccc;
-            cursor: default;
-            border-radius: 20px;
-        }
-    </style>
 
 </head>
 <body>
@@ -51,39 +19,115 @@
 
         <h1>Indicadores</h1>
 
-        <table class="table">
+        <table class="table" id="table-body">
             <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nombre</th>
-                <th>Codigo</th>
-                <th>Unidad de Medida</th>
-                <th>Valor</th>
-                <th>Fecha</th>
-                <th>Tiempo</th>
-                <th>Origen</th>
-            </tr>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Codigo</th>
+                    <th>Unidad de Medida</th>
+                    <th>Valor</th>
+                    <th>Fecha</th>
+                    <th>Tiempo</th>
+                    <th>Origen</th>
+                    <th>Modificar</th> <!-- Edit button column -->
+                    <th>Borrar</th> <!-- Delete button column -->
+                </tr>
             </thead>
             <tbody>
-            <?php foreach ($indicators as $row) { ?>
-                <tr>
-                    <td><?php echo $row['id']; ?></td>
-                    <td><?php echo $row['nombreIndicador']; ?></td>
-                    <td><?php echo $row['codigoIndicador']; ?></td>
-                    <td><?php echo $row['unidadMedidaIndicador']; ?></td>
-                    <td><?php echo $row['valorIndicador']; ?></td>
-                    <td><?php echo $row['fechaIndicador']; ?></td>
-                    <td><?php echo $row['tiempoIndicador']; ?></td>
-                    <td><?php echo $row['origenIndicador']; ?></td>
-                </tr>
-            <?php } ?>
+                <?php foreach ($indicators as $row) { ?>
+                    <tr>
+                        <td><?php echo $row['nombreIndicador']; ?></td>
+                        <td><?php echo $row['codigoIndicador']; ?></td>
+                        <td><?php echo $row['unidadMedidaIndicador']; ?></td>
+                        <td><?php echo $row['valorIndicador']; ?></td>
+                        <td><?php echo $row['fechaIndicador']; ?></td>
+                        <td><?php echo ($row['tiempoIndicador'] == null ? '-' : $row['tiempoIndicador']); ?></td>
+                        <td><?php echo $row['origenIndicador']; ?></td>
+                        <td><button class="btn btn-warning edit-btn" data-id="<?php echo $row['id']; ?>">Editar</button></td>
+                        <td>
+                            <button class="btn btn-danger delete-btn" data-id="<?php echo $row['id']; ?>" onclick="confirmDelete(this)">
+                                <i class="fas fa-trash">Borrar</i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="edit-row" style="display:none;">
+                        <td colspan="8">
+                            <form class="edit-form" data-id="<?php echo $row['id']; ?>">
+                                <input type="text" name="nombreIndicador" value="<?php echo $row['nombreIndicador']; ?>">
+                                <input type="text" name="codigoIndicador" value="<?php echo $row['codigoIndicador']; ?>">
+                                <input type="text" name="unidadMedidaIndicador" value="<?php echo $row['unidadMedidaIndicador']; ?>">
+                                <input type="text" name="valorIndicador" value="<?php echo $row['valorIndicador']; ?>">
+                                <input type="text" name="fechaIndicador" value="<?php echo $row['fechaIndicador']; ?>">
+                                <input type="text" name="tiempoIndicador" value="<?php echo $row['tiempoIndicador']; ?>">
+                                <input type="text" name="origenIndicador" value="<?php echo $row['origenIndicador']; ?>">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="button" class="btn btn-secondary cancel-btn">Cancelar</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php } ?>
             </tbody>
         </table>
         <nav aria-label="...">
-          <ul class="pagination justify-content-center rounded">
-            <?= $pager->links() ?>
-          </ul>
+            <ul class="pagination justify-content-center rounded">
+                <?= $pager->links() ?>
+            </ul>
         </nav>
     </div>
 
-    <script
+    <script>
+        $(document).ready(function() {
+            $('.edit-btn').on('click', function() {
+                $(this).closest('tr').next('.edit-row').slideToggle();
+            });
+        });
+
+        $(document).ready(function() {
+            var form;
+
+            $('.edit-form').submit(function(event) {
+                event.preventDefault();
+                var id = $(this).data('id');
+                var data = $(this).serialize();
+                form = $(this); // Store the form element in the higher scope
+                $.ajax({
+                    url: '/Home/update/' + id,
+                    method: 'POST',
+                    data: data,
+                    success: function(response) {
+                        location.reload();
+                    },
+                    error: function(response) {
+                        alert('An error occurred while updating the row.');
+                    }
+                });
+            });
+
+            $('.cancel-btn').on('click', function() {
+                var form = $(this).closest('form');
+                var id = form.data('id');
+                var displayRow = $('tr[data-id="' + id + '"]').prev();
+                displayRow.toggle();
+                form.closest('tr').toggle();
+            });
+        });
+
+
+
+        function confirmDelete(button) {
+            if (confirm("Are you sure you want to delete this record?")) {
+                let id = button.getAttribute("data-id");
+                $.ajax({
+                type: "POST",
+                url: "<?php echo base_url('eliminar-ajax/'); ?>" + id,
+                success: function() {
+                    window.location.reload();
+                },
+                error: function() {
+                    alert("An error occurred while deleting the record.");
+                }
+                });
+            }
+        }
+    </script>
+

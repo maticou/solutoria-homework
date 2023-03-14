@@ -13,7 +13,7 @@ class Home extends BaseController
         $db = \Config\Database::connect();
 
         $model = new IndicadoresModel();
-        $data['indicators'] = $model->paginate(10); // display 10 records per page
+        $data['indicators'] = $model->paginate(50); // display 10 records per page
 
         // Get the pager object
         $pager = $model->pager;
@@ -29,24 +29,27 @@ class Home extends BaseController
         //
     }
 
-    public function update()
+    public function update($id)
     {
-        //
+        $model = new IndicadoresModel();
+        $data = [
+            'nombreIndicador' => $this->request->getPost('nombreIndicador'),
+            'codigoIndicador' => $this->request->getPost('codigoIndicador'),
+            'unidadMedidaIndicador' => $this->request->getPost('unidadMedidaIndicador'),
+            'valorIndicador' => $this->request->getPost('valorIndicador'),
+            'fechaIndicador' => $this->request->getPost('fechaIndicador'),
+            'tiempoIndicador' => $this->request->getPost('tiempoIndicador'),
+            'origenIndicador' => $this->request->getPost('origenIndicador'),
+        ];
+        $model->update($id, $data);
     }
+    
 
-    public function delete()
-    {
-        //
-    }
 
-    public function testdb()
+    public function eliminarAjax($id)
     {
-        $db = \Config\Database::connect();
-        if ($db->connect()) {
-            echo 'Database connection successful!';
-        } else {
-            echo 'Database connection failed!';
-        }
+        $model = new IndicadoresModel();
+        $model->delete($id);
     }
 
 }
