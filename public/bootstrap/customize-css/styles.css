@@ -1,0 +1,170 @@
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    border-radius: 20px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.pagination li {
+    list-style-type: none;
+    margin-right: 0.5rem;
+    border-radius: 20px;
+}
+
+.pagination li.active a {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    border-radius: 20px;
+}
+
+.pagination li a {
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 0.3rem 0.5rem;
+    border-radius: 20px;
+}
+
+.pagination li.disabled a {
+    color: #ccc;
+    cursor: default;
+    border-radius: 20px;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #007bff;
+    border-radius: 10px 10px 0px 0px;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    border-collapse: collapse;
+    margin-bottom: 0;
+    width: 100%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.table th, .table td {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
+    vertical-align: top;
+}
+
+.table thead th {
+    background-color: #f7f7f7;
+    border-bottom-width: 2px;
+    text-align: center;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.btn-container .btn {
+    margin-right: 10px;
+}
+
+.edit-row {
+    background-color: #f7f7f7;
+}
+
+.edit-form {
+    padding: 10px 0;
+}
+
+.edit-form input[type=text] {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.edit-form button[type=submit] {
+    margin-top: 10px;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.container {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-warning,
+.btn-danger {
+    border-radius: 20px;
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.edit-row {
+    background-color: #f8f9fa;
+}
+
+.edit-form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.edit-form input[type="text"] {
+    flex: 1;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.edit-form button {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Media queries */
+@media (max-width: 576px) {
+    .edit-form input[type="text"] {
+        width: 100%;
+        margin-right: 0;
+    }
+    .edit-form button {
+        width: 100%;
+        margin-right: 0;
+    }
+}

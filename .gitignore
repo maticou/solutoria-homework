@@ -87,7 +87,8 @@ phpunit
 # Composer
 #-------------------------
 vendor/
-public/bootstrap/
+public/bootstrap/css
+public/bootstrap/js
 composer.lock
 
 #-------------------------
