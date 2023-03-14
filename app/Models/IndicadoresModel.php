@@ -7,4 +7,9 @@ class IndicadoresModel extends Model
     protected $table = 'indicadores';
     protected $primaryKey = 'id';
     protected $allowedFields = ['nombreIndicador', 'codigoIndicador', 'unidadMedidaIndicador', 'valorIndicador', 'fechaIndicador', 'tiempoIndicador', 'origenIndicador'];
+
+    public function getIndicadores()
+    {
+        return $this->where('codigoIndicador', 'UF')->findAll();
+    }
 }

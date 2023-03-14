@@ -10,10 +10,9 @@ class Home extends BaseController
 {
     public function index()
     {
-        $db = \Config\Database::connect();
 
         $model = new IndicadoresModel();
-        $data['indicators'] = $model->paginate(10); // display 10 records per page
+        $data['indicators'] = $model->where('codigoIndicador', 'UF')->paginate(10); // display 10 records per page
 
         // Get the pager object
         $pager = $model->pager;
