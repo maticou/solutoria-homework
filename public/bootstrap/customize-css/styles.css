@@ -123,6 +123,9 @@ body {
 
 .btn-primary,
 .btn-secondary,
+.btn-outline-primary,
+.btn-outline-warning,
+.btn-outline-danger,
 .btn-warning,
 .btn-danger {
     border-radius: 20px;

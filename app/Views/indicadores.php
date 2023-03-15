@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Historic Value of UF</title>
-    <meta name="description" content="The small framework with powerful features">
+    <meta name="description" content="Historic Value of UF">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="image/png" href="/favicon.ico">
     <link rel="stylesheet" href="<?php echo base_url('bootstrap/css/bootstrap.min.css'); ?>">
     <link rel="stylesheet" href="<?php echo base_url('bootstrap/customize-css/styles.css'); ?>">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
 </head>
 <body>
 	<div class="container">
@@ -21,46 +19,57 @@
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-                <h1>Indicadores</h1>
                 <div class="col-md-12">
-                    <button class="btn btn-primary mb-3"  id="show-form-btn">Agregar UF</button>
+                    <button class="btn btn-primary mb-3 me-3" id="show-form-btn">Agregar UF</button>
+                    <button class="btn btn-outline-primary mb-3 me-3" id="show-graph-btn">Generar gráfico</button>
+                    <form id="add-graph-section" action="/submit-graph" style="display:none;">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Desde</span>
+                        <input type="date" class="form-control me-3" id="from-date">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Hasta</span>
+                        <input type="date" class="form-control me-3" id="to-date">
+                    </div>
+                        <button class="btn btn-primary mb-3 me-3" id="submit-btn" type="submit">Crear</button>
+                    </form>
                 </div>
                 <div class="col-md-12 mt-3" id="add-form-section" style="display:none;">
-                    <h1>Create Indicador</h1>
+                    <h2 style="color:#343a40;">Añadir nuevo indicador</h2>
+                    <h6 style="color:#6c757d;">¡Recuerde que solo se muestran indicadores con el código UF, los demás se crean y almacenan en la base de datos, pero no se muestran aquí!</h6>
                     <form id="add-form">
                         <div class="form-group">
-                            <label for="nombreIndicador">Nombre Indicador</label>
+                            <label for="nombreIndicador" style="color:#343a40;">Nombre Indicador</label>
                             <input type="text" class="form-control" id="nombreIndicador" name="nombreIndicador" required>
                         </div>
                         <div class="form-group">
-                            <label for="codigoIndicador">Código Indicador</label>
+                            <label for="codigoIndicador" style="color:#343a40;">Código Indicador</label>
                             <input type="text" class="form-control" id="codigoIndicador" name="codigoIndicador" required>
                         </div>
                         <div class="form-group">
-                            <label for="unidadMedidaIndicador">Unidad de Medida</label>
+                            <label for="unidadMedidaIndicador" style="color:#343a40;">Unidad de Medida</label>
                             <input type="text" class="form-control" id="unidadMedidaIndicador" name="unidadMedidaIndicador" required>
                         </div>
                         <div class="form-group">
-                            <label for="valorIndicador">Valor Indicador</label>
-                            <input type="number" class="form-control" id="valorIndicador" name="valorIndicador" required>
+                            <label for="valorIndicador" style="color:#343a40;">Valor Indicador</label>
+                            <input type="number" class="form-control" id="valorIndicador" step=0.01  name="valorIndicador" required>
                         </div>
                         <div class="form-group">
-                            <label for="fechaIndicador">Fecha Indicador</label>
+                            <label for="fechaIndicador" style="color:#343a40;">Fecha Indicador</label>
                             <input type="date" class="form-control" id="fechaIndicador" name="fechaIndicador" required>
                         </div>
                         <div class="form-group">
-                            <label for="tiempoIndicador">Tiempo Indicador</label>
+                            <label for="tiempoIndicador" style="color:#343a40;">Tiempo Indicador</label>
                             <input type="text" class="form-control" id="tiempoIndicador" name="tiempoIndicador" required>
                         </div>
                         <div class="form-group">
-                            <label for="origenIndicador">Origen Indicador</label>
+                            <label for="origenIndicador" style="color:#343a40;">Origen Indicador</label>
                             <input type="text" class="form-control" id="origenIndicador" name="origenIndicador" required>
                         </div>
-
-                        <button type="submit" class="btn btn-primary">Crear Indicador</button>
+                        <button type="submit" class="btn btn-primary mr-2 my-2">Crear Indicador</button>
+                        <button type="button" class="btn btn-secondary my-2" id="show-form-cancel-btn">Cancelar</button>
                     </form>
                 </div>
-                
                 <table class="table table-bordered table-hover" id="table-body">
                     <thead>
                         <tr>
@@ -71,8 +80,8 @@
                             <th>Fecha</th>
                             <th>Tiempo</th>
                             <th>Origen</th>
-                            <th>Modificar</th> <!-- Edit button column -->
-                            <th>Borrar</th> <!-- Delete button column -->
+                            <th>Modificar</th>
+                            <th>Borrar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -124,93 +133,46 @@
             // Show add form section when button is clicked
             $('#show-form-btn').click(function() {
                 $('#add-form-section').toggle();
-            });            
+            });        
+            
+            // Hide add form section when cancel button is clicked
+            $('#show-form-cancel-btn').click(function() {
+                $('#add-form-section').hide();
+            });
+
+            // Show add form section when button is clicked
+            $('#show-graph-btn').click(function() {
+                $('#add-graph-section').toggle();
+            }); 
         });
 
 
         $(document).ready(function() {
-            // Add client-side validation to the form
-            $('#add-form').validate({
-                rules: {
-                    nombreIndicador: {
-                        required: true,
-                        maxlength: 37
-                    },
-                    codigoIndicador: {
-                        required: true,
-                        maxlength: 14
-                    },
-                    unidadMedidaIndicador: {
-                        required: true,
-                        maxlength: 10
-                    },
-                    valorIndicador: {
-                        required: true,
-                        number: true
-                    },
-                    fechaIndicador: {
-                        required: true,
-                        date: true
-                    },
-                    tiempoIndicador: {
-                        maxlength: 30
-                    },
-                    origenIndicador: {
-                        required: true,
-                        maxlength: 13
-                    }
-                },
-                messages: {
-                    nombreIndicador: {
-                        required: "Por favor ingrese el nombre del indicador",
-                        maxlength: "El nombre del indicador debe tener menos de 37 caracteres"
-                    },
-                    codigoIndicador: {
-                        required: "Por favor ingrese el código del indicador",
-                        maxlength: "El código del indicador debe tener menos de 14 caracteres"
-                    },
-                    unidadMedidaIndicador: {
-                        required: "Por favor ingrese la unidad de medida",
-                        maxlength: "La unidad de medida debe tener menos de 10 caracteres"
-                    },
-                    valorIndicador: {
-                        required: "Por favor ingrese el valor del indicador",
-                        number: "El valor del indicador debe ser un número"
-                    },
-                    fechaIndicador: {
-                        required: "Por favor ingrese la fecha del indicador",
-                        date: "La fecha del indicador debe tener el formato yyyy-mm-dd"
-                    },
-                    tiempoIndicador: {
-                        maxlength: "El tiempo del indicador debe tener menos de 30 caracteres"
-                    },
-                    origenIndicador: {
-                        required: "Por favor ingrese el origen del indicador",
-                        maxlength: "El origen del indicador debe tener menos de 13 caracteres"
-                    }
-                },
+            // Bind an event listener to the form's submit event
+            $('#add-form').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from being submitted via a page refresh
+
                 // Submit the form using Ajax if client-side validation passes
-                submitHandler: function(form) {
-                    $.ajax({
-                        type: "POST",
-                        url: '/Home/create/',
-                        dataType: "json",
-                        data: $('#add-form').serialize(),
-                        success: function(response) {
-                            if (response.success) {
-                                alert("Indicador creado exitosamente.");
-                                location.reload();
-                            } else {
-                                alert("Error al crear el indicador.");
-                            }
-                        },
-                        error: function() {
+                $.ajax({
+                    type: "POST",
+                    url: '/Home/create/',
+                    dataType: "json",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            alert("Indicador creado exitosamente.");
+                            location.reload();
+                        } else {
                             alert("Error al crear el indicador.");
                         }
-                    });
-                }
+                    },
+                    error: function() {
+                        alert("Error al crear el indicador.");
+                    }
+                });
             });
         });
+
 
 
         $(document).ready(function() {

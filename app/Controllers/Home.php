@@ -49,7 +49,6 @@ class Home extends BaseController
     }
 
 
-
     public function update($id)
     {
         $model = new IndicadoresModel();
