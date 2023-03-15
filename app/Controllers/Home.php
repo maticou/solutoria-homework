@@ -72,4 +72,43 @@ class Home extends BaseController
         $model->delete($id);
     }
 
+    public function graph($start_date, $end_date)
+    {
+        // Load the IndicadoresModel
+        $model = new IndicadoresModel();
+
+        // Get data for graph
+        $data = $model->select('fechaIndicador, valorIndicador')
+                    ->where('fechaIndicador >=', $start_date)
+                    ->where('fechaIndicador <=', $end_date)
+                    ->where('codigoIndicador', 'UF')
+                    ->orderBy('fechaIndicador', 'asc')
+                    ->findAll();
+
+        // Transform data to the format expected by chart.js
+        $labels = array();
+        $values = array();
+        foreach ($data as $row) {
+            $labels[] = $row['fechaIndicador'];
+            $values[] = $row['valorIndicador'];
+        }
+        $graphData = array(
+            'labels' => $labels,
+            'datasets' => array(
+                array(
+                    'label' => 'UF',
+                    'data' => $values,
+                    'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
+                    'borderColor' => 'rgba(255, 99, 132, 1)',
+                    'borderWidth' => 1
+                )
+            )
+        );
+
+        // Return data as JSON
+        return $this->response->setJSON($graphData);
+    }
+
+
+
 }

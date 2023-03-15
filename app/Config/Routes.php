@@ -33,6 +33,7 @@ $routes->get('/', 'Home::index');
 $routes->post('Home/delete/(:num)', 'Home::delete/$1');
 $routes->post('Home/update/(:num)', 'Home::update/$1');
 $routes->post('Home/create', 'Home::create');
+$routes->get('Home/graph/(:any)/(:any)', 'Home::graph/$1/$2');
 
 
 

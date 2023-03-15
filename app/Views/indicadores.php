@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="<?php echo base_url('bootstrap/css/bootstrap.min.css'); ?>">
     <link rel="stylesheet" href="<?php echo base_url('bootstrap/customize-css/styles.css'); ?>">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 	<div class="container">
@@ -25,14 +26,17 @@
                     <form id="add-graph-section" action="/submit-graph" style="display:none;">
                     <div class="input-group mb-3">
                         <span class="input-group-text">Desde</span>
-                        <input type="date" class="form-control me-3" id="from-date">
+                        <input type="date" class="form-control me-3" id="start-date" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text">Hasta</span>
-                        <input type="date" class="form-control me-3" id="to-date">
+                        <input type="date" class="form-control me-3" id="end-date" value="<?= date('Y-m-d') ?>">
                     </div>
                         <button class="btn btn-primary mb-3 me-3" id="submit-btn" type="submit">Crear</button>
                     </form>
+                </div>
+                <div id="graph-container" style="display: none;">
+                    <canvas id="graph"></canvas>
                 </div>
                 <div class="col-md-12 mt-3" id="add-form-section" style="display:none;">
                     <h2 style="color:#343a40;">Añadir nuevo indicador</h2>
@@ -224,6 +228,64 @@
                 });
             }
         }
+
+        $(document).ready(function() {
+            $('#submit-btn').click(function(event) {
+                event.preventDefault(); // prevent form submission
+
+                // get date range from form
+                var startDate = $('#start-date').val();
+                var endDate = $('#end-date').val();
+
+                // send AJAX request to get data for graph
+                $.ajax({
+                url: '/Home/graph/' + startDate + '/' + endDate,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    var graphData = {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'UF',
+                            data: data.datasets[0].data,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    };
+                    var graphOptions = {
+                    scales: {
+                        y: {
+                        beginAtZero: false
+                        }
+                    }
+                    };
+
+                    var graph = new Chart($('#graph'), {
+                    type: 'line',
+                    data: graphData,
+                    options: graphOptions
+                    });
+
+                    // show graph and toggle button
+                    $('#graph-container').show();
+                    $('#submit-btn').show();
+                },
+                error: function() {
+                    alert('An error occurred while fetching data for the graph.');
+                }
+                });
+            });
+
+            // add click event listener to toggle button
+            $('#submit-btn').click(function() {
+                $('#graph-container').toggle();
+            });
+        });
+
+
+
+
     </script>
 </body>
     
