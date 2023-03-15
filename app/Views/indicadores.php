@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Historic Value of UF</title>
+    <title>Valor de la UF en el tiempo</title>
     <meta name="description" content="Historic Value of UF">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="image/png" href="/favicon.ico">
@@ -24,19 +24,20 @@
                     <button class="btn btn-primary mb-3 me-3" id="show-form-btn">Agregar UF</button>
                     <button class="btn btn-outline-primary mb-3 me-3" id="show-graph-btn">Generar gráfico</button>
                     <form id="add-graph-section" action="/submit-graph" style="display:none;">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Desde</span>
-                        <input type="date" class="form-control me-3" id="start-date" value="<?= date('Y-m-d') ?>">
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Hasta</span>
-                        <input type="date" class="form-control me-3" id="end-date" value="<?= date('Y-m-d') ?>">
-                    </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Desde</span>
+                            <input type="date" class="form-control me-3" id="start-date" value="<?= date('Y-m-d') ?>">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Hasta</span>
+                            <input type="date" class="form-control me-3" id="end-date" value="<?= date('Y-m-d') ?>">
+                        </div>
                         <button class="btn btn-primary mb-3 me-3" id="submit-btn" type="submit">Crear</button>
                     </form>
                 </div>
                 <div id="graph-container" style="display: none;">
                     <canvas id="graph"></canvas>
+                    <button class="btn btn-primary mb-3" id="generate-graph-btn">Generar nuevo gráfico</button>
                 </div>
                 <div class="col-md-12 mt-3" id="add-form-section" style="display:none;">
                     <h2 style="color:#343a40;">Añadir nuevo indicador</h2>
@@ -64,7 +65,7 @@
                         </div>
                         <div class="form-group">
                             <label for="tiempoIndicador" style="color:#343a40;">Tiempo Indicador</label>
-                            <input type="text" class="form-control" id="tiempoIndicador" name="tiempoIndicador" required>
+                            <input type="text" class="form-control" id="tiempoIndicador" name="tiempoIndicador">
                         </div>
                         <div class="form-group">
                             <label for="origenIndicador" style="color:#343a40;">Origen Indicador</label>
@@ -123,7 +124,7 @@
                         <?php } ?>
                     </tbody>
                 </table>
-                <nav aria-label="...">
+                <nav aria-label="..." id='table-paginator'>
                     <ul class="pagination justify-content-center rounded">
                         <?= $pager->links() ?>
                     </ul>
@@ -133,6 +134,30 @@
 	</div>
 
     <script>
+
+        // Get references to the input fields
+        const startDateField = document.getElementById('start-date');
+        const endDateField = document.getElementById('end-date');
+
+        // Add an event listener to the start date field to validate the input
+        startDateField.addEventListener('change', () => {
+            const startDate = new Date(startDateField.value);
+            const endDate = new Date(endDateField.value);
+            if (startDate > endDate) {
+                endDateField.value = startDateField.value;
+            }
+        });
+
+        // Add an event listener to the end date field to validate the input
+        endDateField.addEventListener('change', () => {
+            const startDate = new Date(startDateField.value);
+            const endDate = new Date(endDateField.value);
+            if (endDate < startDate) {
+                startDateField.value = endDateField.value;
+            }
+        });
+
+
         $(document).ready(function() {
             // Show add form section when button is clicked
             $('#show-form-btn').click(function() {
@@ -148,6 +173,11 @@
             $('#show-graph-btn').click(function() {
                 $('#add-graph-section').toggle();
             }); 
+
+            // Generate new graph when button is clicked
+            $('#generate-graph-btn').click(function() {
+                location.reload();
+            });
         });
 
 
@@ -199,7 +229,7 @@
                         location.reload();
                     },
                     error: function(response) {
-                        alert('An error occurred while updating the row.');
+                        alert('Un error ocurrió durante la actualización del dato.');
                     }
                 });
             });
@@ -214,7 +244,7 @@
         });
 
         function confirmDelete(button) {
-            if (confirm("Are you sure you want to delete this record?")) {
+            if (confirm("¿Estás seguro de que quieres borrar este dato?")) {
                 let id = button.getAttribute("data-id");
                 $.ajax({
                 type: "POST",
@@ -223,7 +253,7 @@
                     window.location.reload();
                 },
                 error: function() {
-                    alert("An error occurred while deleting the record.");
+                    alert("Un error ocurrió durante la eliminación del dato.");
                 }
                 });
             }
@@ -253,12 +283,40 @@
                             borderWidth: 1
                         }]
                     };
+
                     var graphOptions = {
-                    scales: {
-                        y: {
-                        beginAtZero: false
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                ticks: {
+                                    font: {
+                                        size: 14,
+                                        color: '#333'
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 14,
+                                        color: '#333'
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Tendencia de la UF en CLP a lo largo del tiempo',
+                                font: {
+                                    size: 18
+                                }
+                            },
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            }
                         }
-                    }
                     };
 
                     var graph = new Chart($('#graph'), {
@@ -267,12 +325,19 @@
                     options: graphOptions
                     });
 
-                    // show graph and toggle button
+                    // hide the form and button
+                    $('#add-graph-section').hide();
+                    $('#show-graph-btn').hide();
+                    $('#show-form-btn').hide();
+                    $('#table-body').hide();
+                    $('#table-paginator').hide();
+
+                    // show the graph container and toggle button
                     $('#graph-container').show();
                     $('#submit-btn').show();
                 },
                 error: function() {
-                    alert('An error occurred while fetching data for the graph.');
+                    alert('Un error ocurrió mientras buscábamos la información.');
                 }
                 });
             });
@@ -282,10 +347,6 @@
                 $('#graph-container').toggle();
             });
         });
-
-
-
-
     </script>
 </body>
     

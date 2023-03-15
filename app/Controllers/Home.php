@@ -12,7 +12,7 @@ class Home extends BaseController
     {
 
         $model = new IndicadoresModel();
-        $data['indicators'] = $model->where('codigoIndicador', 'UF')->paginate(10); // display 10 records per page
+        $data['indicators'] = $model->orderBy('id', 'DESC')->where('codigoIndicador', 'UF')->paginate(10); // display 10 records per page
 
         // Get the pager object
         $pager = $model->pager;
