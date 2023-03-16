@@ -174,7 +174,7 @@
                 $('#add-graph-section').toggle();
             }); 
 
-            // Generate new graph when button is clicked
+            // Reload page when click on Generate new graph button
             $('#generate-graph-btn').click(function() {
                 location.reload();
             });
@@ -185,7 +185,6 @@
             // Bind an event listener to the form's submit event
             $('#add-form').on('submit', function(event) {
                 event.preventDefault(); // Prevent the form from being submitted via a page refresh
-
                 // Submit the form using Ajax if client-side validation passes
                 $.ajax({
                     type: "POST",
@@ -208,10 +207,8 @@
         });
 
 
-
         $(document).ready(function() {
             var form;
-
             $('.edit-btn').on('click', function() {
                 $(this).closest('tr').next('.edit-row').slideToggle();
             });
@@ -261,9 +258,7 @@
 
         $(document).ready(function() {
             $('#submit-btn').click(function(event) {
-                event.preventDefault(); // prevent form submission
-
-                // get date range from form
+                event.preventDefault();
                 var startDate = $('#start-date').val();
                 var endDate = $('#end-date').val();
 
@@ -325,14 +320,14 @@
                     options: graphOptions
                     });
 
-                    // hide the form and button
+                    // hide elements
                     $('#add-graph-section').hide();
                     $('#show-graph-btn').hide();
                     $('#show-form-btn').hide();
                     $('#table-body').hide();
                     $('#table-paginator').hide();
 
-                    // show the graph container and toggle button
+                    // show the graph container and submit button
                     $('#graph-container').show();
                     $('#submit-btn').show();
                 },
@@ -342,14 +337,9 @@
                 });
             });
 
-            // add click event listener to toggle button
             $('#submit-btn').click(function() {
                 $('#graph-container').toggle();
             });
         });
     </script>
 </body>
-    
-
-    
-

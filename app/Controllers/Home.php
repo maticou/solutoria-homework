@@ -10,9 +10,8 @@ class Home extends BaseController
 {
     public function index()
     {
-
         $model = new IndicadoresModel();
-        $data['indicators'] = $model->orderBy('id', 'DESC')->where('codigoIndicador', 'UF')->paginate(10); // display 10 records per page
+        $data['indicators'] = $model->orderBy('id', 'DESC')->where('codigoIndicador', 'UF')->paginate(10);
 
         // Get the pager object
         $pager = $model->pager;
@@ -26,6 +25,7 @@ class Home extends BaseController
     public function create()
     {
         if ($this->request->isAJAX()) {
+
             // Get the POST data
             $data = $this->request->getPost();
 
@@ -33,17 +33,15 @@ class Home extends BaseController
             $data['nombreIndicador'] = strtoupper($data['nombreIndicador']);
             $data['codigoIndicador'] = strtoupper($data['codigoIndicador']);
 
-            // Validate the data
             $model = new IndicadoresModel();
+
             // validate the data
             if (!$model->validate($data)) {
                 return $this->response->setJSON(['success' => false, 'message' => $model->errors()]);
             }
-            // save data to database
             $model->save($data);
             return $this->response->setJSON(['success' => true, 'message' => 'Data saved successfully.']);
-        } else {
-            // Return the view for creating data
+        } else {            
             return view('create');
         }
     }
@@ -52,6 +50,7 @@ class Home extends BaseController
     public function update($id)
     {
         $model = new IndicadoresModel();
+
         $data = [
             'nombreIndicador' => strtoupper($this->request->getPost('nombreIndicador')),
             'codigoIndicador' => strtoupper($this->request->getPost('codigoIndicador')),
@@ -61,10 +60,10 @@ class Home extends BaseController
             'tiempoIndicador' => $this->request->getPost('tiempoIndicador'),
             'origenIndicador' => $this->request->getPost('origenIndicador'),
         ];
+
         $model->update($id, $data);
     }
     
-
 
     public function delete($id)
     {
@@ -74,7 +73,6 @@ class Home extends BaseController
 
     public function graph($start_date, $end_date)
     {
-        // Load the IndicadoresModel
         $model = new IndicadoresModel();
 
         // Get data for graph
@@ -85,13 +83,15 @@ class Home extends BaseController
                     ->orderBy('fechaIndicador', 'asc')
                     ->findAll();
 
-        // Transform data to the format expected by chart.js
+        // Transform data
         $labels = array();
         $values = array();
+
         foreach ($data as $row) {
             $labels[] = $row['fechaIndicador'];
             $values[] = $row['valorIndicador'];
         }
+
         $graphData = array(
             'labels' => $labels,
             'datasets' => array(
@@ -104,11 +104,6 @@ class Home extends BaseController
                 )
             )
         );
-
-        // Return data as JSON
         return $this->response->setJSON($graphData);
     }
-
-
-
 }
